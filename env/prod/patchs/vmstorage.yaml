@@ -1,0 +1,36 @@
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: vmstorage
+spec:
+  replicas: 5
+  template:
+    spec:
+      containers:
+        - name: vmstorage
+          command:
+            - ./vmstorage-prod
+          args:
+            - '-retentionPeriod=400d'
+            - '-search.maxUniqueTimeseries=3000000'
+            - '-storageDataPath=./vmstorage-data'
+          resources:
+            limits:
+              cpu: 8000m
+              memory: 65536Mi
+            requests:
+              cpu: 50m
+              memory: 32768Mi
+          volumeMounts:
+            - name: vmdata
+              mountPath: /vmstorage-data
+  volumeClaimTemplates:
+    - metadata:
+        name: vmdata
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "monitor-disk"
+        resources:
+          requests:
+            storage: 20Gi

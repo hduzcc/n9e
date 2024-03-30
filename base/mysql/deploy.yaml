@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+        - image: mysql:5.7.41
+          name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-root
+                  key: password
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: conf
+              mountPath: /etc/mysql/conf.d
+            - name: initsql
+              mountPath: /docker-entrypoint-initdb.d/
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: conf
+          configMap:
+            name: mysql-conf
+        - name: initsql
+          configMap:
+            name: initsql

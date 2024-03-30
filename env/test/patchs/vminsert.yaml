@@ -1,0 +1,22 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: vminsert
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: vminsert
+          command:
+            - ./vminsert-prod
+          args:
+            - '-storageNode=vmstorage-0.vmstorage-server:8400,vmstorage-1.vmstorage-server:8400,vmstorage-2.vmstorage-server:8400'
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 5120Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi

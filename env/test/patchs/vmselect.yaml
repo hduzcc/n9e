@@ -1,0 +1,24 @@
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: vmselect
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: vmselect
+          command:
+            - ./vmselect-prod
+          args:
+            - '-selectNode=vmselect-0.vmselect-server:8481,vmselect-1.vmselect-server:8481,vmselect-2.vmselect-server:8481'
+            - '-storageNode=vmstorage-0.vmstorage-server:8401,vmstorage-1.vmstorage-server:8401,vmstorage-2.vmstorage-server:8401'
+            - '-cacheDataPath=./vmselect-cache'
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 5120Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi

@@ -1,0 +1,52 @@
+configMapGenerator:
+- files:
+  - ibex/resources/server.conf
+  name: ibex-conf
+- files:
+  - mysql/resources/my.cnf
+  name: mysql-conf
+- files:
+  - mysql/resources/initsql/ibex.sql
+  - mysql/resources/initsql/n9e.sql
+  - mysql/resources/initsql/privileges.sql
+  name: initsql
+- files:
+  - n9e/resources/config.toml
+  - n9e/resources/metrics.yaml
+  name: n9e-conf
+- files:
+  - n9e/resources/edge/edge.toml
+  name: n9e-edge
+- files:
+  - n9e/resources/script/notify_feishu.py
+  - n9e/resources/script/notify.py
+  - n9e/resources/script/rule_converter.py
+  name: n9e-script
+- files:
+  - public/scripts/base/call.py
+  - public/scripts/base/db_utils.py
+  - public/scripts/base/feishu.py
+  name: public-script-base
+- files:
+  - public/scripts/alert-mute.py
+  - public/scripts/alert-send-by-aggr.py
+  - public/scripts/alert-send-by-project.py
+  - public/scripts/create-project.py
+  name: public-script
+- files:
+  - public/resources/target_bind.sql
+  - public/resources/target_delete.sql
+  name: targetsql
+generatorOptions:
+  disableNameSuffixHash: true
+resources:
+- ibex
+- mysql
+- redis
+- n9e
+- victoria-metrics
+- public
+secretGenerator:
+- name: mysql-root
+  literals:
+  - password=1234

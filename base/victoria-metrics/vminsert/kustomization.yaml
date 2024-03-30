@@ -1,0 +1,6 @@
+
+commonLabels:
+  app: vminsert
+resources:
+- deploy.yaml
+- svc.yaml

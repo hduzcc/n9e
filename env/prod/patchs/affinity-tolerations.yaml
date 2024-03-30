@@ -1,0 +1,21 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: patch-affinity-tolerations
+spec:
+  template:
+    spec:
+      affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: type
+                  operator: In
+                  values:
+                  - monitor
+      tolerations:
+      - key: "type"
+        operator: "Equal"
+        value: "monitor"
+        effect: "NoSchedule"

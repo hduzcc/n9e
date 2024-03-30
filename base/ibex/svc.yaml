@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ibex
+  labels:
+    app: ibex
+spec:
+  ports:
+    - name: tcp-10090
+      port: 10090
+    - name: tcp-20090
+      port: 20090
+  selector:
+    app: ibex

@@ -1,0 +1,5 @@
+resources:
+- nginx.yaml
+- n9e.yaml
+- ibex.yaml
+- vmselect.yaml

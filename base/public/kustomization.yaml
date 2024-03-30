@@ -1,0 +1,9 @@
+commonLabels:
+  app: job
+generatorOptions:
+  disableNameSuffixHash: true
+resources:
+- target-delete.yaml
+- target-bind.yaml
+- alert-send-by-aggr.yaml
+- alert-send-by-project.yaml

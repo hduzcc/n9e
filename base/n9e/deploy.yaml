@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n9e
+spec:
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+        - image: flashcatcloud/nightingale:latest
+          name: n9e
+          command:
+            - ./n9e
+          ports:
+            - name: tcp-17000
+              containerPort: 17000
+              protocol: TCP
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: conf
+              mountPath: /app/etc/config.toml
+              subPath: config.toml
+            - name: conf
+              mountPath: /app/etc/metrics.yaml
+              subPath: metrics.yaml
+            - name: edge
+              mountPath: /app/etc/edge
+            - name: script
+              mountPath: /app/etc/script
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: conf
+          configMap:
+            name: n9e-conf
+        - name: edge
+          configMap:
+            name: n9e-edge
+        - name: script
+          configMap:
+            name: n9e-script

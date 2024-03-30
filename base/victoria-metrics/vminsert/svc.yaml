@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: vminsert-server
+spec:
+  ports:
+    - name: tcp-8480
+      protocol: TCP
+      port: 8480
+      targetPort: 8480

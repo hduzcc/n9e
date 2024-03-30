@@ -1,0 +1,124 @@
+---
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+apiVersion: v1
+data:
+  default.conf: |
+    server {
+        listen       80;
+        server_name  localhost;
+    
+        location / {
+            root   /coredump;
+    		autoindex on;
+    		autoindex_exact_size off;
+        autoindex_localtime on;
+        }
+    }
+  nginx.conf: |
+    user  root;
+    worker_processes  auto;
+    
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+    
+    
+    events {
+        worker_connections  1024;
+    }
+    
+    
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+    
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+    
+        access_log  /var/log/nginx/access.log  main;
+    
+        sendfile        on;
+        #tcp_nopush     on;
+    
+        keepalive_timeout  65;
+    
+        #gzip  on;
+    
+        include /etc/nginx/conf.d/*.conf;
+    }
+  n9e.conf: |
+    upstream n9e-server{
+      server n9e:17000;
+    }
+    
+    server{
+      listen 80; 
+      server_name n9e.xxx.com;
+      location / {
+        proxy_pass http://n9e-server;
+      }
+    }
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+            defaultMode: 420
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - name: tcp-80
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/n9e.conf
+              subPath: n9e.conf
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: default
+      serviceAccount: default
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

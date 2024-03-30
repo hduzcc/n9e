@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: vmstorage-server
+  annotations:
+    kubesphere.io/serviceType: statefulservice
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-8400
+      protocol: TCP
+      port: 8400
+      targetPort: 8400
+    - name: tcp-8401
+      protocol: TCP
+      port: 8401
+      targetPort: 8401
+    - name: tcp-8402
+      protocol: TCP
+      port: 8402
+      targetPort: 8402

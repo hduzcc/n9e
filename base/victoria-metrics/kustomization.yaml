@@ -1,0 +1,6 @@
+generatorOptions:
+  disableNameSuffixHash: true
+resources:
+- vmstorage
+- vmselect
+- vminsert

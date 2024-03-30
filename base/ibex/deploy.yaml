@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ibex
+spec:
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+        - image: flashcatcloud/ibex:v1.2.0
+          name: ibex
+          command: 
+            - ./ibex
+          args: 
+            - server
+          ports:
+            - name: tcp-10090
+              containerPort: 10090
+              protocol: TCP
+            - name: tcp-20090
+              containerPort: 20090
+              protocol: TCP
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: conf
+              mountPath: /app/etc/server.conf
+              subPath: server.conf
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: conf
+          configMap:
+            name: ibex-conf

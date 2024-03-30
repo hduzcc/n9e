@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: vmselect-server
+  annotations:
+    kubesphere.io/serviceType: statefulservice
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-8481
+      protocol: TCP
+      port: 8481
+      targetPort: 8481

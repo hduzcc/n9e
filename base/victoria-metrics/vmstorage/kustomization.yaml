@@ -1,0 +1,5 @@
+commonLabels:
+  app: vmstorage
+resources:
+- sts.yaml
+- svc.yaml

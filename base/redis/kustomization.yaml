@@ -1,0 +1,7 @@
+commonLabels:
+  app: redis
+generatorOptions:
+  disableNameSuffixHash: true
+resources:
+- deploy.yaml
+- svc.yaml

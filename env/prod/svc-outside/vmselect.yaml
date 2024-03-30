@@ -1,0 +1,26 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: vmselect-outside
+  annotations:
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-acl-id: 安全组acl_id     # 实例访问控制
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-acl-status: 'on'
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-acl-type: white
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-id: "阿里云lbid"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-force-override-listeners: "true"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-switch: "on" # 开启健康检查
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-type: "tcp"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-connect-timeout: "8"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-healthy-threshold: "4"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-unhealthy-threshold: "4"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-interval: "3"
+spec:
+  publishNotReadyAddresses: true
+  type: LoadBalancer
+  selector:
+    app: vmselect
+  ports:
+    - name: tcp-8481
+      port: 8481
+      protocol: TCP
+      targetPort: 8481

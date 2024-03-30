@@ -1,0 +1,6 @@
+
+commonLabels:
+  app: vmselect
+resources:
+- sts.yaml
+- svc.yaml

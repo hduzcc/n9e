@@ -1,0 +1,7 @@
+commonLabels:
+  app: mysql
+generatorOptions:
+  disableNameSuffixHash: true
+resources:
+- deploy.yaml
+- svc.yaml

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-send-by-project
+spec:
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+        - image: python-tools
+          name: alert-send-by-project
+          command:
+            - python3
+          args:
+            - /app/src/alert-send-by-project.py
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: public-script-base
+              mountPath: /app/src/base
+            - name: public-script
+              mountPath: /app/src/alert-send-by-project.py
+              subPath: alert-send-by-project.py
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: public-script
+          configMap:
+            name: public-script
+        - name: public-script-base
+          configMap:
+            name: public-script-base
+      imagePullSecrets:
+        - name: lthub

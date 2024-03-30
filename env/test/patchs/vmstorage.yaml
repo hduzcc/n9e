@@ -1,0 +1,24 @@
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: vmstorage
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: vmstorage
+          command:
+            - ./vmstorage-prod
+          args:
+            - '-retentionPeriod=400d'
+            - '-search.maxUniqueTimeseries=3000000'
+            - '-storageDataPath=./vmstorage-data'
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 5120Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi

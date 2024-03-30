@@ -1,0 +1,46 @@
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: create-poject
+  labels:
+    app: create-poject
+spec:
+  parallelism: 1
+  completions: 1
+  activeDeadlineSeconds: 999
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 180
+  template:
+    metadata:
+      labels:
+        app: create-poject
+    spec:
+      volumes:
+        - name: scripts
+          configMap:
+            name: public-script
+            defaultMode: 420
+      restartPolicy: Never
+      containers:
+        - name: create-poject
+          image: python-tools
+          command:
+            - python3
+          args:
+            - /app/public-script/create-project.py
+            - $(PROJECT)
+            - $(PROJECT_EN)
+            - $(USER)
+          env:
+            - name: PROJECT
+              value: '项目中文'
+            - name: PROJECT_EN
+              value: '项目英文简写'
+            - name: USER
+              value: 'zhengcc'
+          volumeMounts:
+            - name: scripts
+              mountPath: /app/public-script/create-project.py
+              subPath: create-project.py
+      imagePullSecrets:
+        - name: lthub

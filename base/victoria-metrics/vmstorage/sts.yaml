@@ -1,0 +1,40 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: vmstorage
+  annotations:
+    kubesphere.io/serviceType: statefulservice
+spec:
+  replicas: 1
+  serviceName: vmstorage-server
+  template:
+    metadata:
+      annotations:
+        kubesphere.io/imagepullsecrets: '{"vmstorage":"lthub"}'
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+      containers:
+        - name: vmstorage
+          image: victoriametrics/vmstorage
+          command:
+            - sleep
+          args:
+            - 99d
+          ports:
+            - name: insert-8400
+              containerPort: 8400
+              protocol: TCP
+            - name: select-8401
+              containerPort: 8401
+              protocol: TCP
+            - name: tcp-8402
+              containerPort: 8402
+              protocol: TCP
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime

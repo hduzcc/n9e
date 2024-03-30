@@ -1,0 +1,50 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: target-delete
+spec:
+  schedule: 0 * * * *
+  concurrencyPolicy: Allow
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      parallelism: 1
+      completions: 1
+      activeDeadlineSeconds: 9999
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          volumes:
+            - name: host-time
+              hostPath:
+                path: /etc/localtime
+                type: ''
+            - name: targetsql
+              configMap:
+                name: targetsql
+          containers:
+            - name: target-delete
+              image: python-tools
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  mysql -u root -h mysql n9e_v6 < /sql/target_delete.sql
+              volumeMounts:
+                - name: host-time
+                  mountPath: /etc/localtime
+                  readOnly: true
+                - name: targetsql
+                  mountPath: /sql
+              env:
+                - name: MYSQL_PWD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mysql-root
+                      key: password
+          imagePullSecrets:
+            - name: lthub

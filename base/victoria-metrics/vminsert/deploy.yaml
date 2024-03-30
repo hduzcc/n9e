@@ -1,0 +1,30 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: vminsert
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+      containers:
+        - name: vminsert
+          image: victoriametrics/vminsert
+          command:
+            - sleep
+          args:
+            - 99d
+          ports:
+            - name: tcp-8480
+              containerPort: 8480
+              protocol: TCP
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime

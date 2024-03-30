@@ -1,0 +1,31 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: vmselect
+  annotations:
+    kubesphere.io/serviceType: statefulservice
+spec:
+  replicas: 1
+  serviceName: vmselect-server
+  template:
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+      containers:
+        - name: vmselect
+          image: victoriametrics/vmselect
+          command:
+            - sleep
+          args:
+            - 99d
+          ports:
+            - name: tcp-8481
+              containerPort: 8481
+              protocol: TCP
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
